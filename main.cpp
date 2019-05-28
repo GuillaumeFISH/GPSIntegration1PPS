@@ -186,11 +186,11 @@ void Detect1PPS() {
 //Function that attempts to fetch gps information and parse it
 //Will be triggered by pps eventually or by a high priority queue
 void GPS_data() {
-    pc.printf("Inside GPS Data Function");
+    //pc.printf("Inside GPS Data Function");
     int received = 0;
     do{
         c = myGPS.read();   //queries the GPS
-        if (c) { pc.printf("%c", c); } //this line will echo the GPS data if not paused
+        //if (c) { pc.printf("%c", c); } //this line will echo the GPS data if not paused
         
         //check if we recieved a new message from GPS, if so, attempt to parse it,
         if ( myGPS.newNMEAreceived() ) {
@@ -199,10 +199,11 @@ void GPS_data() {
             }
             else
                 received++;
-                pc.printf("Received...%d", received);  
+                //pc.printf("Received...%d", received);  
         }
     } while(received != 2);
     int_time = asUnixTime(myGPS.year+2000, myGPS.month, myGPS.day, myGPS.hour, myGPS.minute, myGPS.seconds, myGPS.milliseconds);    
+    Read_Sensors();
 }
 
 /* Simple main function */
@@ -296,9 +297,11 @@ int main() {
     //ReadTicker.attach(eventQueue.event(&Read_Sensors), 1.0f);
     //PrintTicker.attach(printfQueue.event(&Print_Sensors), 1.0f);
 
-    PPS.fall(GPSQueue.event(&GPS_data));
-    PPS.rise(eventQueue.event(&Read_Sensors));
+    PPS.rise(GPSQueue.event(&GPS_data));
+    //PPS.rise(eventQueue.event(&Read_Sensors));
     PPS.fall(printfQueue.event(&Print_Sensors));
+
+
     //PPS.fall(GPSQueue.event(&Detect1PPS));
     
     wait(osWaitForever);
